@@ -1,65 +1,23 @@
-import { useEffect, useState } from 'react';
+import { useWheel } from '../hooks/useWheel';
 
-import { Arrow } from './arrow';
-import { WheelSegments } from './wheel-segments';
-import { CenterCircle } from './center-circle';
+import { Arrow, CenterCircle, WheelSegments } from '.';
 
+import { TIME_ROTATION } from '../constants';
 import { TWheelOfFortune } from '../types';
-import { generateWinProbability } from '../utils/utils';
-
-const timeRotation = 7000;
 
 const WheelOfFortune = (props: TWheelOfFortune) => {
-  const { prices, startStopSpinning, spinning, showResult } = props;
-  const sectionAngle = 360 / prices.length;
-  const delta = sectionAngle / 2;
-  const [wheelRotationDeg, setWheelRotationDeg] = useState(0);
-
-  const findSectionIndex = (shift: number = 0) => {
-    const currentSegment = ((wheelRotationDeg % 360) + shift) / sectionAngle;
-    const i = Math.floor(currentSegment);
-
-    return i >= prices.length ? i - 1 : i;
-  };
-
-  useEffect(() => {
-    if (!spinning) return;
-
-    const winProbability = generateWinProbability(prices);
-    const currSectionIndex = findSectionIndex();
-
-    const remainingDeg = wheelRotationDeg % sectionAngle;
-    const randomDeg = Math.floor(Math.random() * sectionAngle) - remainingDeg;
-    const offsetToWinSection =
-      (winProbability - currSectionIndex) * sectionAngle + randomDeg;
-    const totalRotation = offsetToWinSection + 360 * 5 - delta;
-
-    setWheelRotationDeg((prev) => prev + totalRotation);
-  }, [spinning]);
-
-  useEffect(() => {
-    if (!wheelRotationDeg) return;
-
-    const spinInterval = setTimeout(() => {
-      startStopSpinning(false);
-      const i = findSectionIndex(delta);
-      const value = prices[i].value;
-      showResult(value);
-    }, timeRotation);
-
-    return () => clearInterval(spinInterval);
-  }, [wheelRotationDeg]);
+  const wheelRotationDeg = useWheel(props);
 
   return (
-    <div className='relative h-full border bg-slate-100 rounded-full overflow-hidden'>
+    <div className='relative h-full border rounded-full overflow-hidden bg-slate-50'>
       <div
         className='h-full w-full transition-transform'
         style={{
           transform: `rotate(${wheelRotationDeg}deg)`,
-          transitionDuration: `${timeRotation}ms`,
+          transitionDuration: `${TIME_ROTATION}ms`,
         }}
       >
-        <WheelSegments prices={prices} />
+        <WheelSegments prices={props.prices} />
       </div>
 
       <div className='absolute -bottom-1 left-1/2 -translate-x-1/2'>

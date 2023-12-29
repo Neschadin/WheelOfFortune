@@ -15,17 +15,17 @@ export const WheelSegments = ({ prices }: { prices: TPrices }) => {
     setBackgroundColors(colors);
   }, []);
 
-  const sections = prices.map((prize, index) => {
-    const rotation = index * sectionAngle;
+  const sections = prices.map((prize, i) => {
+    const rotation = i * sectionAngle;
     const segmentStyle = {
       transform: `rotate(-${rotation}deg) translate(-50%, 0%)`,
       clipPath: `polygon(${params})`,
-      backgroundColor: backgroundColors[index],
+      backgroundColor: backgroundColors[i],
     };
 
     return (
       <div
-        key={index}
+        key={'key_' + i}
         className='flex-center absolute left-1/2 top-1/2 h-1/2 w-full origin-top-left'
         style={segmentStyle}
       >
