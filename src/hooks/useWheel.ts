@@ -1,4 +1,4 @@
-import  { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { generateWinProbability } from '../utils/utils';
 
 import { TIME_ROTATION } from '../constants';
@@ -13,8 +13,7 @@ export const useWheel = (props: TWheelOfFortune) => {
   const findSectionIndex = (shift: number = 0) => {
     const currentSegment = ((wheelRotationDeg % 360) + shift) / sectionAngle;
     const i = Math.floor(currentSegment);
-
-    return i >= prices.length ? i - 1 : i;
+    return i >= prices.length ? 0 : i;
   };
 
   // prize section generation;
