@@ -5,11 +5,13 @@ import { WheelSegments } from './wheel-segments';
 import { GoButton } from './go-button';
 import { MarkerIcon } from '../icons';
 
-import { TIME_ROTATION } from '../../constants';
 import { prices } from '@/src/mockup'; //TODO: temp
 
 export const WheelOfFortune = () => {
-  const { wheelRotationDeg, spinning, startSpin } = useWheel({ prices });
+  const { TIME_ROTATION, wheelRotationDeg, hasSpined, startSpin, winIndex } =
+    useWheel({
+      prices,
+    });
 
   return (
     <div className="flex-center relative flex-col gap-10">
@@ -23,14 +25,16 @@ export const WheelOfFortune = () => {
           style={{ boxShadow: '0px 0px 64px 32px rgba(221 214 214 / 0.5)' }}
         />
 
-        <div
-          className="h-full w-full transition-transform"
-          style={{
-            transform: `rotate(${wheelRotationDeg}deg)`,
-            transitionDuration: `${TIME_ROTATION}ms`,
-          }}
-        >
-          <WheelSegments prices={prices} />
+        <div className="size-full rotate-90">
+          <div
+            className="size-full transition-transform"
+            style={{
+              transform: `rotate(${wheelRotationDeg}deg)`,
+              transitionDuration: `${TIME_ROTATION}ms`,
+            }}
+          >
+            <WheelSegments {...{ prices, winIndex }} />
+          </div>
         </div>
 
         <CenterCircles />
@@ -39,7 +43,7 @@ export const WheelOfFortune = () => {
           <MarkerIcon />
         </div>
 
-        <GoButton {...{ startSpin, spinning }} />
+        <GoButton {...{ startSpin, hasSpined }} />
       </div>
     </div>
   );

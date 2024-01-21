@@ -290,4 +290,6 @@ const imgItems: { [key: string]: string } = {
   tournamentNavActive: 'tournament_nav_active.svg',
 };
 
-export const getImgUrl = (name: string) => baseUrl + imgItems[name];
+type ImgItemKey = keyof typeof imgItems;
+
+export const getImgUrl = (item: ImgItemKey) => baseUrl + imgItems[item];

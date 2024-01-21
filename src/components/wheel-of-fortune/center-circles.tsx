@@ -1,7 +1,7 @@
 export const CenterCircles = () => {
   return (
     <div
-      className="block-center h-full w-full rounded-full"
+      className="block-center size-full rounded-full"
       style={{ boxShadow: 'inset 0px 0px 15px 36px rgba(221 214 254 / 0.1)' }}
     >
       <div className="block-center h-[96%] w-[96%] rounded-full outline outline-4 outline-violet-200/10">

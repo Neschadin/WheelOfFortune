@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 
-import { TIME_ROTATION } from '../../constants';
 import { TPrices } from '../../types';
+
+const TIME_ROTATION = 7000;
 
 type TWheelBase = {
   prices: TPrices;
@@ -20,20 +21,20 @@ const generateWinProbability = (prices: TPrices) => {
 
 export const useWheel = (props: TWheelBase) => {
   const { prices } = props;
-  const [spinning, setSpinning] = useState(false);
-  const [result, setResult] = useState('');
+  const [hasSpined, setHasSpined] = useState(false);
+  const [winIndex, setWinIndex] = useState<null | number>(null);
   const [wheelRotationDeg, setWheelRotationDeg] = useState(0);
 
   const sectionAngle = 360 / prices.length;
   const delta = sectionAngle / 2;
 
   const startSpin = () => {
-    setSpinning(!spinning);
+    setHasSpined(!hasSpined);
   };
 
-  const showResult = (str: string) => {
-    setResult(str);
-    console.log('Wheel result >>> ', str); // TODO:
+  const showResult = (i: number) => {
+    setWinIndex(i);
+    console.log('Wheel result >>> ', i); // TODO:
   };
 
   const findSectionIndex = (shift: number = 0) => {
@@ -44,7 +45,7 @@ export const useWheel = (props: TWheelBase) => {
 
   // prize section generation;
   useEffect(() => {
-    if (!spinning) return;
+    if (!hasSpined) return;
 
     const winProbability = generateWinProbability(prices);
     const currSectionIndex = findSectionIndex();
@@ -56,21 +57,21 @@ export const useWheel = (props: TWheelBase) => {
     const totalRotation = offsetToWinSection + 360 * 5 - delta;
 
     setWheelRotationDeg((prev) => prev + totalRotation);
-  }, [spinning]);
+  }, [hasSpined]);
 
   // wheel rotation start;
   useEffect(() => {
     if (!wheelRotationDeg) return;
 
-    const spinInterval = setTimeout(() => {
-      startSpin();
+    const spinTimeout = setTimeout(() => {
+      // startSpin();
       const i = findSectionIndex(delta);
-      const value = prices[i].value;
-      showResult(value);
+      // const value = prices[i].value;
+      showResult(i);
     }, TIME_ROTATION);
 
-    return () => clearInterval(spinInterval);
+    return () => clearTimeout(spinTimeout);
   }, [wheelRotationDeg]);
 
-  return { wheelRotationDeg, spinning, startSpin };
+  return { TIME_ROTATION, wheelRotationDeg, hasSpined, startSpin, winIndex };
 };
