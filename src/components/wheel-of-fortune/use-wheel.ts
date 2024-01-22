@@ -1,35 +1,42 @@
 import { useEffect, useState } from 'react';
 
-import { TPrices } from '../../types';
-
 const TIME_ROTATION = 7000;
 
-type TWheelBase = {
-  prices: TPrices;
+const fetchData = async (url: string) => {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error('Failed to fetch wheel meta');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.log('error >> ', error);
+  }
 };
 
-const generateWinProbability = (prices: TPrices) => {
-  const sum = prices.reduce(
-    (accumulator, price) => accumulator + price.probability,
-    0
-  );
-  let pick = Math.random() * sum;
-  const i = prices.findIndex((price) => (pick -= price.probability) <= 0);
+// const generateWinProbability = () => {
+//   const sum = prices.reduce(
+//     (accumulator, price) => accumulator + price.probability,
+//     0
+//   );
+//   let pick = Math.random() * sum;
+//   const i = prices.findIndex((price) => (pick -= price.probability) <= 0);
 
-  return i !== -1 ? i : 0;
-};
+//   return i !== -1 ? i : 0;
+// };
 
-export const useWheel = (props: TWheelBase) => {
-  const { prices } = props;
-  const [hasSpined, setHasSpined] = useState(false);
+export const useWheel = () => {
+  const [sectionItems, setSectionItems] = useState([] as TSectionItems);
+  const [isSpined, setIsSpined] = useState(false);
   const [winIndex, setWinIndex] = useState<null | number>(null);
   const [wheelRotationDeg, setWheelRotationDeg] = useState(0);
 
-  const sectionAngle = 360 / prices.length;
+  const sectionAngle = 360 / sectionItems.length;
   const delta = sectionAngle / 2;
 
   const startSpin = () => {
-    setHasSpined(!hasSpined);
+    setIsSpined(!isSpined);
   };
 
   const showResult = (i: number) => {
@@ -40,14 +47,24 @@ export const useWheel = (props: TWheelBase) => {
   const findSectionIndex = (shift: number = 0) => {
     const currentSegment = ((wheelRotationDeg % 360) + shift) / sectionAngle;
     const i = Math.floor(currentSegment);
-    return i >= prices.length ? 0 : i;
+    return i >= sectionItems.length ? 0 : i;
   };
+
+  useEffect(() => {
+    fetchData('https://youwin.gg/api/meta/wheel').then(setSectionItems);
+  }, []);
+
+  useEffect(() => {
+    if (!isSpined) return;
+    fetchData('https://youwin.gg/api/meta/wheel/result').then(console.log);
+  }, [isSpined]);
 
   // prize section generation;
   useEffect(() => {
-    if (!hasSpined) return;
+    if (!isSpined) return;
 
-    const winProbability = generateWinProbability(prices);
+    // const winProbability = generateWinProbability(sectionItems);
+    const winProbability = 0;
     const currSectionIndex = findSectionIndex();
 
     const remainingDeg = wheelRotationDeg % sectionAngle;
@@ -57,7 +74,7 @@ export const useWheel = (props: TWheelBase) => {
     const totalRotation = offsetToWinSection + 360 * 5 - delta;
 
     setWheelRotationDeg((prev) => prev + totalRotation);
-  }, [hasSpined]);
+  }, [isSpined]);
 
   // wheel rotation start;
   useEffect(() => {
@@ -73,5 +90,12 @@ export const useWheel = (props: TWheelBase) => {
     return () => clearTimeout(spinTimeout);
   }, [wheelRotationDeg]);
 
-  return { TIME_ROTATION, wheelRotationDeg, hasSpined, startSpin, winIndex };
+  return {
+    sectionItems,
+    TIME_ROTATION,
+    wheelRotationDeg,
+    isSpined,
+    startSpin,
+    winIndex,
+  };
 };

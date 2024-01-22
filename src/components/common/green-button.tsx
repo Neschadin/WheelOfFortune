@@ -5,7 +5,7 @@ interface IProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
 export const GreenButton = ({ children, ...otherProps }: IProps) => {
   return (
     <button
-      className="h-14 w-52 shrink-0 rounded-[10px] text-xl font-extrabold text-neutral-200 active:text-2xl"
+      className="h-14 w-52 shrink-0 rounded-[10px] outline-inset outline-2"
       style={{
         boxShadow: '0px 0px 18px 0px rgba(1, 210, 131, 0.60)',
         background:
@@ -14,7 +14,7 @@ export const GreenButton = ({ children, ...otherProps }: IProps) => {
       {...otherProps}
     >
       <span
-        className=" uppercase leading-7 tracking-wide"
+        className="text-xl font-extrabold uppercase leading-7 tracking-wide text-neutral-200 transition-all hover:text-2xl active:text-xl active:text-neutral-400"
         style={{ textShadow: '0px 0px 7px rgba(0, 0, 0, 0.25)' }}
       >
         {children}

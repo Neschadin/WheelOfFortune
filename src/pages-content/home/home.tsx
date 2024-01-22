@@ -1,8 +1,10 @@
 'use client';
 import { useState } from 'react';
 
-import { Checkbox, GreenButton, WheelOfFortune } from '@/src/components';
+import { Checkbox, GreenButton, Modal, WheelOfFortune } from '@/src/components';
 import { DropGiftIcon } from '@/src/components/icons';
+import { getImgUrl } from '@/src/utils/imageUrls';
+import { ModalContentSignIn } from './modal-content-sign-in';
 
 const labelFirstChB = (
   <>
@@ -14,12 +16,13 @@ const labelFirstChB = (
 );
 
 export const Home = () => {
-  // const [hasSpined, setHasSpined] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(true);
+
   // const [result, setResult] = useState('');
 
-  // const startStopSpinning = (state: boolean) => {
-  //   setHasSpined(state);
-  // };
+  const openCloseModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
 
   // const showResult = (str: string) => {
   //   setResult(str);
@@ -49,6 +52,10 @@ export const Home = () => {
         <div className="mx-auto w-fit">
           <GreenButton>CLAIM NOW</GreenButton>
         </div>
+
+        <Modal isOpen={isModalOpen} onClose={openCloseModal}>
+          <ModalContentSignIn onAction={() => console.log('test')} />
+        </Modal>
       </div>
 
       <WheelOfFortune />

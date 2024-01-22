@@ -202,6 +202,7 @@ const imgItems: { [key: string]: string } = {
   checkCirclePurple: 'check_circle_purple.svg',
   crossCircle: 'cross_circle.svg',
   diamondVip: 'diamond_vip.svg',
+  vipFull: "vip_full.svg",
 
   visa: 'visa.webp',
   masterCard: 'mastercard.webp',
@@ -288,6 +289,9 @@ const imgItems: { [key: string]: string } = {
   tasksNavActive: 'tasks_nav_active.svg',
   tournamentNav: 'tournament_nav.svg',
   tournamentNavActive: 'tournament_nav_active.svg',
+
+  winCelebration: 'win_celebration.webp',
+  neonGift:"neon_gift.svg"
 };
 
 type ImgItemKey = keyof typeof imgItems;
