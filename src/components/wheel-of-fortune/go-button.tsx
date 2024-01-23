@@ -1,13 +1,17 @@
 import clsx from 'clsx';
 
-type TProps = { startSpin: () => void; isSpined: boolean };
+type TProps = {
+  onAction: () => void;
+  isSpined: boolean;
+  disabled: boolean;
+};
 
-export const GoButton = ({ startSpin, isSpined }: TProps) => {
+export const GoButton = ({ onAction, isSpined, disabled }: TProps) => {
   return (
     <button
       className="block-center size-36 rounded-full bg-[#171A2A] font-roboto shadow-[0px_0px_13px_6px_#f8f6f640]"
-      onClick={startSpin}
-      disabled={isSpined}
+      onClick={onAction}
+      disabled={isSpined || disabled}
     >
       <div
         style={{ textShadow: '0px 0px 25px #000' }}

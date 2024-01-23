@@ -1,10 +1,18 @@
 'use client';
-import { useState } from 'react';
 
-import { Checkbox, GreenButton, Modal, WheelOfFortune } from '@/src/components';
+import { useEffect, useState } from 'react';
+
+import {
+  CheckboxRow,
+  GreenButton,
+  Modal,
+  WheelOfFortune,
+} from '@/src/components';
 import { DropGiftIcon } from '@/src/components/icons';
 import { getImgUrl } from '@/src/utils/imageUrls';
 import { ModalContentSignIn } from './modal-content-sign-in';
+import { useApiService } from '@/src/hooks/use-api-service';
+import { useAuth } from '@/src/providers/auth-provider';
 
 const labelFirstChB = (
   <>
@@ -15,19 +23,47 @@ const labelFirstChB = (
   </>
 );
 
-export const Home = () => {
-  const [isModalOpen, setIsModalOpen] = useState(true);
-
-  // const [result, setResult] = useState('');
+export const Home = ({ authToken }: { authToken?: string }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isGoBtnPressed, setIsGoBtnPressed] = useState(false);
+  const [hasFreeSpin, setHasFreeSpin] = useState(true);
+  const { isAuthenticated, setToken } = useAuth();
+  const { validateToken, getRoulettePrizes, getRouletteResult } =
+    useApiService();
 
   const openCloseModal = () => {
     setIsModalOpen(!isModalOpen);
   };
 
-  // const showResult = (str: string) => {
-  //   setResult(str);
-  //   console.log('Wheel result >>> ', str); // TODO:
-  // };
+
+  const handleSignInBtn = () => {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+    const url = `${baseUrl}api/player/auth${isGoBtnPressed ? '?source=wheel' : ''}`;
+    window.location.href = url;
+  };
+
+  const handleClaimBtn = () => {
+    if (isAuthenticated) {
+      window.location.href = process.env.NEXT_PUBLIC_BASE_URL!;
+    } else {
+      openCloseModal();
+    }
+  };
+
+  const handleGoBtn = (cb: () => void) => {
+    if (isAuthenticated) {
+      cb();
+    } else {
+      setIsGoBtnPressed(true);
+      openCloseModal();
+    }
+  };
+
+  useEffect(() => {
+    if (authToken) {
+      setToken(authToken);
+    }
+  }, []);
 
   return (
     <main className="m-auto flex h-full max-w-screen-2xl items-center justify-around">
@@ -38,9 +74,9 @@ export const Home = () => {
         </div>
 
         <div className="mb-16 flex flex-col gap-11">
-          <Checkbox onClick={() => {}} label={labelFirstChB} />
-          <Checkbox onClick={() => {}} label="1 FREE WHEEL OF FORTUNE SPIN" />
-          <Checkbox onClick={() => {}} label="3 FREE BOXES EVERY DAY" />
+          <CheckboxRow checked={isAuthenticated} label={labelFirstChB} />
+          <CheckboxRow checked label="1 FREE WHEEL OF FORTUNE SPIN" />
+          <CheckboxRow label="3 FREE BOXES EVERY DAY" />
         </div>
 
         <div className="mx-auto mb-12 flex w-fit">
@@ -50,15 +86,15 @@ export const Home = () => {
         </div>
 
         <div className="mx-auto w-fit">
-          <GreenButton>CLAIM NOW</GreenButton>
+          <GreenButton onClick={handleClaimBtn}>CLAIM NOW</GreenButton>
         </div>
 
         <Modal isOpen={isModalOpen} onClose={openCloseModal}>
-          <ModalContentSignIn onAction={() => console.log('test')} />
+          <ModalContentSignIn onAction={handleSignInBtn} />
         </Modal>
       </div>
 
-      <WheelOfFortune />
+      <WheelOfFortune handleGoBtn={handleGoBtn} />
     </main>
   );
 };

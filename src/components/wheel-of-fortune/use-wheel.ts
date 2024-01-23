@@ -1,34 +1,13 @@
 import { useEffect, useState } from 'react';
+import { useApiService } from '@/src/hooks/use-api-service';
 
 const TIME_ROTATION = 7000;
 
-const fetchData = async (url: string) => {
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error('Failed to fetch wheel meta');
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.log('error >> ', error);
-  }
-};
-
-// const generateWinProbability = () => {
-//   const sum = prices.reduce(
-//     (accumulator, price) => accumulator + price.probability,
-//     0
-//   );
-//   let pick = Math.random() * sum;
-//   const i = prices.findIndex((price) => (pick -= price.probability) <= 0);
-
-//   return i !== -1 ? i : 0;
-// };
-
 export const useWheel = () => {
+  const { getRoulettePrizes, getRouletteResult } = useApiService();
   const [sectionItems, setSectionItems] = useState([] as TSectionItems);
   const [isSpined, setIsSpined] = useState(false);
+  const [result, setResult] = useState<TResult>();
   const [winIndex, setWinIndex] = useState<null | number>(null);
   const [wheelRotationDeg, setWheelRotationDeg] = useState(0);
 
@@ -39,9 +18,15 @@ export const useWheel = () => {
     setIsSpined(!isSpined);
   };
 
-  const showResult = (i: number) => {
-    setWinIndex(i);
-    console.log('Wheel result >>> ', i); // TODO:
+  // const showResult = (i: number) => {
+  //   setWinIndex(i);
+  //   console.log('Wheel result >>> ', i); // TODO:
+  // };
+
+  const findWinIndex = () => {
+    if (!result) return;
+    const i = sectionItems.findIndex((item) => item.id === result.id);
+    if (i !== -1) return i;
   };
 
   const findSectionIndex = (shift: number = 0) => {
@@ -51,40 +36,37 @@ export const useWheel = () => {
   };
 
   useEffect(() => {
-    fetchData('https://youwin.gg/api/meta/wheel').then(setSectionItems);
+    getRoulettePrizes().then((res) => setSectionItems(res.data));
   }, []);
 
   useEffect(() => {
     if (!isSpined) return;
-    fetchData('https://youwin.gg/api/meta/wheel/result').then(console.log);
-  }, [isSpined]);
-
-  // prize section generation;
-  useEffect(() => {
-    if (!isSpined) return;
-
-    // const winProbability = generateWinProbability(sectionItems);
-    const winProbability = 0;
-    const currSectionIndex = findSectionIndex();
-
-    const remainingDeg = wheelRotationDeg % sectionAngle;
-    const randomDeg = Math.floor(Math.random() * sectionAngle) - remainingDeg;
-    const offsetToWinSection =
-      (winProbability - currSectionIndex) * sectionAngle + randomDeg;
-    const totalRotation = offsetToWinSection + 360 * 5 - delta;
-
-    setWheelRotationDeg((prev) => prev + totalRotation);
+    getRouletteResult().then((res) => setResult(res.data));
   }, [isSpined]);
 
   // wheel rotation start;
   useEffect(() => {
-    if (!wheelRotationDeg) return;
+    if (!result) return;
+    const i = findWinIndex();
+    if (!i) return;
+
+    const currSectionIndex = findSectionIndex();
+    const remainingDeg = wheelRotationDeg % sectionAngle;
+    const randomDeg = Math.floor(Math.random() * sectionAngle) - remainingDeg;
+    const offsetToWinSection =
+      (i - currSectionIndex) * sectionAngle + randomDeg;
+    const totalRotation = offsetToWinSection + 360 * 5 - delta;
+
+    setWheelRotationDeg((prev) => prev + totalRotation);
+  }, [result]);
+
+  useEffect(() => {
+    if (!wheelRotationDeg || !result) return;
 
     const spinTimeout = setTimeout(() => {
-      // startSpin();
-      const i = findSectionIndex(delta);
-      // const value = prices[i].value;
-      showResult(i);
+      const i = findWinIndex();
+      i && setWinIndex(i);
+      // showResult(i);
     }, TIME_ROTATION);
 
     return () => clearTimeout(spinTimeout);

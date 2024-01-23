@@ -23,16 +23,12 @@ export const Modal = ({ isOpen, onClose, children }: TProps) => {
   };
 
   const handleOutsideClick: MouseEventHandler<HTMLDialogElement> = (ev) => {
-    const modalRect = ev.currentTarget.getBoundingClientRect();
+    const { currentTarget, clientX, clientY } = ev;
+    const { left, right, top, bottom } = currentTarget.getBoundingClientRect();
+    const isOutside =
+      clientX < left || clientX > right || clientY < top || clientY > bottom;
 
-    if (
-      ev.clientX < modalRect.left ||
-      ev.clientX > modalRect.right ||
-      ev.clientY < modalRect.top ||
-      ev.clientY > modalRect.bottom
-    ) {
-      onClose();
-    }
+    isOutside && onClose();
   };
 
   useEffect(() => {
@@ -44,11 +40,11 @@ export const Modal = ({ isOpen, onClose, children }: TProps) => {
   useEffect(() => {
     if (!isOpen) return;
 
-    const originalOverflowStyle = document.body.style.overflow;
+    const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
 
     return () => {
-      document.body.style.overflow = originalOverflowStyle;
+      document.body.style.overflow = originalOverflow;
     };
   }, [isOpen]);
 

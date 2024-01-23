@@ -2,9 +2,14 @@ import { clsx } from 'clsx';
 
 import { iconParams } from './icon-params';
 
-type TProps = { sectionItems: TSectionItems; winIndex: null | number };
+type TProps = {
+  sectionItems: TSectionItems;
+  winIndex: null | number;
+};
 
 export const WheelSegments = ({ sectionItems, winIndex }: TProps) => {
+  if (!sectionItems.length) return null;
+
   const sectionAngle = 360 / sectionItems.length;
   const halfBase = 50 * Math.tan((sectionAngle / 2) * (Math.PI / 180));
   const params = `50% 0%, ${50 - halfBase}% 100%, ${50 + halfBase}% 100%`;

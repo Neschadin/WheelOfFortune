@@ -5,8 +5,9 @@ import { WheelSegments } from './wheel-segments';
 import { GoButton } from './go-button';
 import { MarkerIcon } from '../icons';
 
+type TProps = { handleGoBtn: (cb: () => void) => void };
 
-export const WheelOfFortune = () => {
+export const WheelOfFortune = ({ handleGoBtn }: TProps) => {
   const {
     sectionItems,
     TIME_ROTATION,
@@ -15,6 +16,10 @@ export const WheelOfFortune = () => {
     startSpin,
     winIndex,
   } = useWheel();
+
+  const onAction = () => {
+    handleGoBtn(startSpin);
+  };
 
   return (
     <div className="flex-center relative flex-col gap-10">
@@ -46,7 +51,11 @@ export const WheelOfFortune = () => {
           <MarkerIcon />
         </div>
 
-        <GoButton {...{ startSpin, isSpined }} />
+        <GoButton
+          onAction={onAction}
+          isSpined={isSpined}
+          disabled={!sectionItems.length}
+        />
       </div>
     </div>
   );

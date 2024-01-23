@@ -20,7 +20,7 @@ export const Checkbox = (props: CheckboxProps) => {
   return (
     <label className="flex items-center">
       <div
-        className={`relative size-[26px] cursor-pointer rounded border ${disabled && !checked ? 'border-neutral-600' : 'border-neutral-300'}`}
+        className={`relative size-[26px] cursor-pointer rounded border ${disabled ? 'border-neutral-600' : 'border-neutral-300'}`}
       >
         <div
           className={`block-center transition-all ${isChecked ? 'opacity-100' : 'opacity-0'}`}
