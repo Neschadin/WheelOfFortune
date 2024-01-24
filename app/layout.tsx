@@ -3,7 +3,6 @@ import { inter, roboto, luckiest } from './fonts';
 
 import type { Metadata } from 'next';
 import './globals.css';
-import { AuthProvider } from '@/src/providers/auth-provider';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -16,7 +15,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body
         className={`${inter.className} ${roboto.variable} ${luckiest.variable}`}
       >
-        <AuthProvider>{children}</AuthProvider>
+        {children}
       </body>
     </html>
   );

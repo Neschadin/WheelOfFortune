@@ -4,21 +4,32 @@ import { CenterCircles } from './center-circles';
 import { WheelSegments } from './wheel-segments';
 import { GoButton } from './go-button';
 import { MarkerIcon } from '../icons';
+import { Modal } from '..';
+import { ModalContentYourWin } from '@/src/pages-content/home/modal-content-your-win';
+import { useAuth } from '@/src/providers/wheel-provider';
+import { useState } from 'react';
+import { ModalContentSignIn } from '@/src/pages-content/home/modal-content-sign-in';
 
-type TProps = { handleGoBtn: (cb: () => void) => void };
-
-export const WheelOfFortune = ({ handleGoBtn }: TProps) => {
+export const WheelOfFortune = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { isAuthenticated, isBonusReceived } = useAuth();
   const {
     sectionItems,
     TIME_ROTATION,
     wheelRotationDeg,
     isSpined,
     startSpin,
+    result,
     winIndex,
+    showWinResult,
   } = useWheel();
 
-  const onAction = () => {
-    handleGoBtn(startSpin);
+  const goBtnAction = () => {
+    if (isAuthenticated) {
+      startSpin();
+    } else {
+      setIsModalOpen(true);
+    }
   };
 
   return (
@@ -52,11 +63,18 @@ export const WheelOfFortune = ({ handleGoBtn }: TProps) => {
         </div>
 
         <GoButton
-          onAction={onAction}
-          isSpined={isSpined}
-          disabled={!sectionItems.length}
+          onClick={goBtnAction}
+          disabled={!sectionItems.length || isBonusReceived || isSpined}
         />
       </div>
+
+      <Modal isOpen={showWinResult || isModalOpen}>
+        {result ? (
+          <ModalContentYourWin result={result} />
+        ) : (
+          <ModalContentSignIn isGoBtn />
+        )}
+      </Modal>
     </div>
   );
 };

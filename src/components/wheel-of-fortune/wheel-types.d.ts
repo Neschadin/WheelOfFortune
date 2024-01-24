@@ -6,4 +6,4 @@ type TSectionItem = {
 
 type TSectionItems = TSectionItem[];
 
-type TResult = { id: string; amount: num };
+type TResult = TSectionItem & { amount: num; subEnd?: string };

@@ -1,4 +1,4 @@
-const baseUrl = 'https://d208znpz6acgp4.cloudfront.net/images/';
+import { apiImgUrl } from '../config';
 
 const imgItems: { [key: string]: string } = {
   Pen: 'pen.svg',
@@ -202,7 +202,7 @@ const imgItems: { [key: string]: string } = {
   checkCirclePurple: 'check_circle_purple.svg',
   crossCircle: 'cross_circle.svg',
   diamondVip: 'diamond_vip.svg',
-  vipFull: "vip_full.svg",
+  vipFull: 'vip_full.svg',
 
   visa: 'visa.webp',
   masterCard: 'mastercard.webp',
@@ -291,9 +291,9 @@ const imgItems: { [key: string]: string } = {
   tournamentNavActive: 'tournament_nav_active.svg',
 
   winCelebration: 'win_celebration.webp',
-  neonGift:"neon_gift.svg"
+  neonGift: 'neon_gift.svg',
 };
 
 type ImgItemKey = keyof typeof imgItems;
 
-export const getImgUrl = (item: ImgItemKey) => baseUrl + imgItems[item];
+export const getImgUrl = (item: ImgItemKey) => apiImgUrl + imgItems[item];

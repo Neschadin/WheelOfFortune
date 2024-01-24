@@ -10,23 +10,19 @@ export const useWheel = () => {
   const [result, setResult] = useState<TResult>();
   const [winIndex, setWinIndex] = useState<null | number>(null);
   const [wheelRotationDeg, setWheelRotationDeg] = useState(0);
+  const [showWinResult, setShowWinResult] = useState(false);
 
   const sectionAngle = 360 / sectionItems.length;
   const delta = sectionAngle / 2;
 
   const startSpin = () => {
-    setIsSpined(!isSpined);
+    setIsSpined(true);
   };
 
-  // const showResult = (i: number) => {
-  //   setWinIndex(i);
-  //   console.log('Wheel result >>> ', i); // TODO:
-  // };
-
   const findWinIndex = () => {
-    if (!result) return;
+    if (!result) return null;
     const i = sectionItems.findIndex((item) => item.id === result.id);
-    if (i !== -1) return i;
+    return i === -1 ? null : i;
   };
 
   const findSectionIndex = (shift: number = 0) => {
@@ -41,21 +37,24 @@ export const useWheel = () => {
 
   useEffect(() => {
     if (!isSpined) return;
-    getRouletteResult().then((res) => setResult(res.data));
+    getRouletteResult().then((res) => {
+      const item = sectionItems.find((item) => item.id === res.data.id);
+      setResult({ ...res.data, ...item });
+    });
   }, [isSpined]);
 
   // wheel rotation start;
   useEffect(() => {
     if (!result) return;
     const i = findWinIndex();
-    if (!i) return;
+    if (i === null) return;
 
     const currSectionIndex = findSectionIndex();
     const remainingDeg = wheelRotationDeg % sectionAngle;
     const randomDeg = Math.floor(Math.random() * sectionAngle) - remainingDeg;
     const offsetToWinSection =
       (i - currSectionIndex) * sectionAngle + randomDeg;
-    const totalRotation = offsetToWinSection + 360 * 5 - delta;
+    const totalRotation = offsetToWinSection + 360 * 4 - delta;
 
     setWheelRotationDeg((prev) => prev + totalRotation);
   }, [result]);
@@ -63,14 +62,22 @@ export const useWheel = () => {
   useEffect(() => {
     if (!wheelRotationDeg || !result) return;
 
-    const spinTimeout = setTimeout(() => {
-      const i = findWinIndex();
-      i && setWinIndex(i);
-      // showResult(i);
+    const t = setTimeout(() => {
+      setWinIndex(findWinIndex());
     }, TIME_ROTATION);
 
-    return () => clearTimeout(spinTimeout);
+    return () => clearTimeout(t);
   }, [wheelRotationDeg]);
+
+  useEffect(() => {
+    if (winIndex === null) return;
+
+    const t = setTimeout(() => {
+      setShowWinResult(true);
+    }, 2000);
+
+    return () => clearTimeout(t);
+  }, [winIndex]);
 
   return {
     sectionItems,
@@ -78,6 +85,8 @@ export const useWheel = () => {
     wheelRotationDeg,
     isSpined,
     startSpin,
+    result,
     winIndex,
+    showWinResult,
   };
 };

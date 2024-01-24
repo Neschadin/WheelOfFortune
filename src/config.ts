@@ -1,4 +1,7 @@
-export const iconParams: { [key: string]: string } = {
+export const baseUrl = process.env.NEXT_PUBLIC_BASE_URL!;
+export const apiImgUrl = process.env.NEXT_PUBLIC_API_IMG_URL!;
+
+export const wheelIconParams: { [key: string]: string } = {
   vip3d: 'w-[140px]',
   goldKey: 'w-[100px]',
   gyw$: 'w-[68px]',

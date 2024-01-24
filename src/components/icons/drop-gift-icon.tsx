@@ -1,5 +1,5 @@
 import { getImgUrl } from '@/src/utils/imageUrls';
-import { GiftIcon, GreenShadowIcon } from '.';
+import { GreenShadowIcon } from '.';
 
 export const DropGiftIcon = () => {
   return (
@@ -12,9 +12,7 @@ export const DropGiftIcon = () => {
       <div className="block-center">
         <GreenShadowIcon />
       </div>
-      <div className="block-center">
-        <GiftIcon />
-      </div>
+      <img className="block-center size-8" src={getImgUrl('neonGift')} alt="" />
     </picture>
   );
 };

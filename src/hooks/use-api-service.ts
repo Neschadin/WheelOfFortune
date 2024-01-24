@@ -1,8 +1,10 @@
 import axios from 'axios';
 
+import { baseUrl } from '../config';
+
 export const useApiService = () => {
   const apiClient = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_BASE_URL + 'api/',
+    baseURL: baseUrl + 'api/',
   });
 
   apiClient.interceptors.request.use((config) => {
@@ -15,7 +17,7 @@ export const useApiService = () => {
     return config;
   });
 
-  const validateToken = () => {
+  const getPlayerData = () => {
     return apiClient.get('player');
   };
 
@@ -28,7 +30,7 @@ export const useApiService = () => {
   };
 
   return {
-    validateToken,
+    getPlayerData,
     getRoulettePrizes,
     getRouletteResult,
   };

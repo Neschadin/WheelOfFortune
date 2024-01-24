@@ -9,16 +9,21 @@ import { CloseIcon } from '../icons';
 
 type TProps = {
   isOpen: boolean;
-  onClose: () => void;
+  onClose?: () => void;
   children: ReactNode;
 };
 
 export const Modal = ({ isOpen, onClose, children }: TProps) => {
   const ref = useRef<HTMLDialogElement | null>(null);
 
+  const handleClose = () => {
+    onClose && onClose();
+    ref.current?.close();
+  };
+
   const handleKeyDown = (ev: KeyboardEvent<HTMLDialogElement>) => {
     if (ev.key === 'Escape') {
-      onClose();
+      handleClose();
     }
   };
 
@@ -28,7 +33,7 @@ export const Modal = ({ isOpen, onClose, children }: TProps) => {
     const isOutside =
       clientX < left || clientX > right || clientY < top || clientY > bottom;
 
-    isOutside && onClose();
+    isOutside && handleClose();
   };
 
   useEffect(() => {
@@ -54,11 +59,11 @@ export const Modal = ({ isOpen, onClose, children }: TProps) => {
       className="relative max-h-fit w-[600px] rounded-[10px] border border-blue-950 bg-stone-950 p-[74px] 
                  backdrop:bg-stone-950 backdrop:opacity-75"
       style={{ boxShadow: '0px 0px 14px 0 rgba(221 214 214 / 0.5)' }}
-      onCancel={onClose}
+      onCancel={handleClose}
       onKeyDown={handleKeyDown}
       onClick={handleOutsideClick}
     >
-      <button className="absolute right-6 top-6" onClick={onClose}>
+      <button className="absolute right-6 top-6" onClick={handleClose}>
         <CloseIcon />
       </button>
 

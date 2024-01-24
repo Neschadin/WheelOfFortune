@@ -2,11 +2,11 @@ import { ReactNode } from 'react';
 import { CheckIcon } from '../icons';
 
 interface CheckboxProps {
-  label?: ReactNode;
-  checked?: boolean;
+  children: ReactNode;
+  checked: boolean;
 }
 
-export const CheckboxRow = ({ label, checked }: CheckboxProps) => {
+export const CheckboxRow = ({ children, checked }: CheckboxProps) => {
   return (
     <label className="flex items-center">
       <div className="relative size-[26px] rounded border border-neutral-300">
@@ -17,7 +17,9 @@ export const CheckboxRow = ({ label, checked }: CheckboxProps) => {
         </div>
       </div>
 
-      <div className="ml-9 font-roboto uppercase tracking-widest">{label}</div>
+      <div className="ml-9 font-roboto uppercase tracking-widest">
+        {children}
+      </div>
     </label>
   );
 };

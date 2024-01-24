@@ -1,10 +1,15 @@
 import { Home } from '@/src/pages-content/home/home';
+import { WheelProvider } from '@/src/providers/wheel-provider';
 
 type TProps = { [key: string]: string | string[] | undefined };
 
 export default function HomePage({ searchParams }: { searchParams: TProps }) {
-  const authToken =
+  const token =
     typeof searchParams?.token === 'string' ? searchParams.token : undefined;
 
-  return <Home authToken={authToken} />;
+  return (
+    <WheelProvider token={token}>
+      <Home />;
+    </WheelProvider>
+  );
 }

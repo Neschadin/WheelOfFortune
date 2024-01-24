@@ -1,3 +1,5 @@
+// this component is not in use. for the future;
+
 import { ReactNode, useState } from 'react';
 import { CheckIcon } from '../icons';
 

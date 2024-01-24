@@ -1,6 +1,5 @@
+import { wheelIconParams } from '@/src/config';
 import { clsx } from 'clsx';
-
-import { iconParams } from './icon-params';
 
 type TProps = {
   sectionItems: TSectionItems;
@@ -35,7 +34,7 @@ export const WheelSegments = ({ sectionItems, winIndex }: TProps) => {
           <img
             className={clsx(
               'h-auto transition-all',
-              iconParams.hasOwnProperty(id) ? iconParams[id] : 'w-40',
+              wheelIconParams.hasOwnProperty(id) ? wheelIconParams[id] : 'w-40',
               { 'brightness-125': winIndex !== null && winIndex === i }
             )}
             src={image_url}
