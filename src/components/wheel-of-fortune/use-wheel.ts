@@ -32,7 +32,9 @@ export const useWheel = () => {
   };
 
   useEffect(() => {
-    getRoulettePrizes().then((res) => setSectionItems(res.data));
+    getRoulettePrizes().then((res) => {
+      setSectionItems(res.data);
+    });
   }, []);
 
   useEffect(() => {

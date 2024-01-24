@@ -50,7 +50,7 @@ const WheelProvider = ({ token, children }: TProviderProps) => {
   useEffect(() => {
     token && setToken(token);
     verifyTokenAndPlayer();
-  }, [token]);
+  }, []);
 
   const contextValue = {
     isAuthenticated,

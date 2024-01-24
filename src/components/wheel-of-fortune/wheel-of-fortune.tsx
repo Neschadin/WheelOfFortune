@@ -1,14 +1,15 @@
+import { useState } from 'react';
 import { useWheel } from './use-wheel';
+import { useAuth } from '@/src/providers/wheel-provider';
 
+import { ModalContentYourWin } from '@/src/pages-content/home/modal-content-your-win';
+import { ModalContentSignIn } from '@/src/pages-content/home/modal-content-sign-in';
 import { CenterCircles } from './center-circles';
 import { WheelSegments } from './wheel-segments';
 import { GoButton } from './go-button';
 import { MarkerIcon } from '../icons';
 import { Modal } from '..';
-import { ModalContentYourWin } from '@/src/pages-content/home/modal-content-your-win';
-import { useAuth } from '@/src/providers/wheel-provider';
-import { useState } from 'react';
-import { ModalContentSignIn } from '@/src/pages-content/home/modal-content-sign-in';
+import clsx from 'clsx';
 
 export const WheelOfFortune = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -58,13 +59,18 @@ export const WheelOfFortune = () => {
 
         <CenterCircles />
 
-        <div className="absolute left-[34%] top-1/2 -translate-y-1/2">
+        <div
+          className={clsx(
+            'absolute left-[34%] top-1/2 -translate-y-1/2 transition-all',
+            winIndex ? 'opacity-100' : 'opacity-0'
+          )}
+        >
           <MarkerIcon />
         </div>
 
         <GoButton
           onClick={goBtnAction}
-          disabled={!sectionItems.length || isBonusReceived || isSpined}
+          disabled={!sectionItems.length ||  isSpined}
         />
       </div>
 
