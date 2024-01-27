@@ -1,26 +1,20 @@
-'use client';
+import { Home } from '@/src/pages-content/home/home';
+import { WheelProvider } from '@/src/providers/wheel-provider';
+import { apiService } from '@/src/utils/api-service';
 
-import { useState } from 'react';
+type TProps = {
+  searchParams: { [key: string]: string | string[] | undefined };
+};
 
-import { WheelOfFortune } from '@/src/components/wheel-of-fortune';
+export default async function HomePage({ searchParams }: TProps) {
+  const token =
+    typeof searchParams?.token === 'string' ? searchParams.token : undefined;
 
-export default function Home() {
-  // const [spinning, setSpinning] = useState(false);
-  // const [result, setResult] = useState('');
-
-  // const startStopSpinning = (state: boolean) => {
-  //   setSpinning(state);
-  // };
-
-  // const showResult = (str: string) => {
-  //   setResult(str);
-  //   console.log('Wheel result >>> ', str); // TODO:
-  // };
+  const wheelSections = (await apiService.getRoulettePrizes()) || [];
 
   return (
-    <main className='flex h-full max-w-screen-2xl justify-around items-center m-auto'>
-      <div className='h-96 w-96 border'></div>
-      <WheelOfFortune />
-    </main>
+    <WheelProvider {...{ token, wheelSections }}>
+      <Home />;
+    </WheelProvider>
   );
 }
