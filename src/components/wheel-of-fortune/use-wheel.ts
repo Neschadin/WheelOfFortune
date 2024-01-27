@@ -1,76 +1,87 @@
+import { apiService } from '@/src/utils/api-service';
 import { useEffect, useState } from 'react';
 
-import { TIME_ROTATION } from '../../constants';
-import { TPrices } from '../../types';
+const TIME_ROTATION = 7000;
 
-type TWheelBase = {
-  prices: TPrices;
-};
-
-const generateWinProbability = (prices: TPrices) => {
-  const sum = prices.reduce(
-    (accumulator, price) => accumulator + price.probability,
-    0
-  );
-  let pick = Math.random() * sum;
-  const i = prices.findIndex((price) => (pick -= price.probability) <= 0);
-
-  return i !== -1 ? i : 0;
-};
-
-export const useWheel = (props: TWheelBase) => {
-  const { prices } = props;
-  const [spinning, setSpinning] = useState(false);
-  const [result, setResult] = useState('');
+export const useWheel = (wheelSections: TWheelSections) => {
+  const { getRouletteResult } = apiService;
+  const [isSpined, setIsSpined] = useState(false);
+  const [result, setResult] = useState<TResult>();
+  const [winIndex, setWinIndex] = useState<null | number>(null);
   const [wheelRotationDeg, setWheelRotationDeg] = useState(0);
+  const [showWinResult, setShowWinResult] = useState(false);
 
-  const sectionAngle = 360 / prices.length;
+  const sectionAngle = 360 / wheelSections.length;
   const delta = sectionAngle / 2;
 
   const startSpin = () => {
-    setSpinning(!spinning);
+    setIsSpined(true);
   };
 
-  const showResult = (str: string) => {
-    setResult(str);
-    console.log('Wheel result >>> ', str); // TODO:
+  const findWinIndex = () => {
+    if (!result) return null;
+    const i = wheelSections.findIndex((item) => item.id === result.id);
+    return i === -1 ? null : i;
   };
 
   const findSectionIndex = (shift: number = 0) => {
     const currentSegment = ((wheelRotationDeg % 360) + shift) / sectionAngle;
     const i = Math.floor(currentSegment);
-    return i >= prices.length ? 0 : i;
+    return i >= wheelSections.length ? 0 : i;
   };
 
-  // prize section generation;
   useEffect(() => {
-    if (!spinning) return;
-
-    const winProbability = generateWinProbability(prices);
-    const currSectionIndex = findSectionIndex();
-
-    const remainingDeg = wheelRotationDeg % sectionAngle;
-    const randomDeg = Math.floor(Math.random() * sectionAngle) - remainingDeg;
-    const offsetToWinSection =
-      (winProbability - currSectionIndex) * sectionAngle + randomDeg;
-    const totalRotation = offsetToWinSection + 360 * 5 - delta;
-
-    setWheelRotationDeg((prev) => prev + totalRotation);
-  }, [spinning]);
+    if (!isSpined) return;
+    getRouletteResult().then((res) => {
+      const item = wheelSections.find((item) => item.id === res.id);
+      setResult({ ...res, ...item });
+    });
+  }, [isSpined]);
 
   // wheel rotation start;
   useEffect(() => {
-    if (!wheelRotationDeg) return;
+    if (!result) return;
+    const i = findWinIndex();
+    if (i === null) return;
 
-    const spinInterval = setTimeout(() => {
-      startSpin();
-      const i = findSectionIndex(delta);
-      const value = prices[i].value;
-      showResult(value);
+    const currSectionIndex = findSectionIndex();
+    const remainingDeg = wheelRotationDeg % sectionAngle;
+    const randomDeg = Math.floor(Math.random() * sectionAngle) - remainingDeg;
+    const offsetToWinSection =
+      (i - currSectionIndex) * sectionAngle + randomDeg;
+    const totalRotation = offsetToWinSection + 360 * 4 - delta;
+
+    setWheelRotationDeg((prev) => prev + totalRotation);
+  }, [result]);
+
+  useEffect(() => {
+    if (!wheelRotationDeg || !result) return;
+
+    const t = setTimeout(() => {
+      setWinIndex(findWinIndex());
     }, TIME_ROTATION);
 
-    return () => clearInterval(spinInterval);
+    return () => clearTimeout(t);
   }, [wheelRotationDeg]);
 
-  return { wheelRotationDeg, spinning, startSpin };
+  useEffect(() => {
+    if (winIndex === null) return;
+
+    const t = setTimeout(() => {
+      setShowWinResult(true);
+    }, 2000);
+
+    return () => clearTimeout(t);
+  }, [winIndex]);
+
+  return {
+    wheelSections,
+    TIME_ROTATION,
+    wheelRotationDeg,
+    isSpined,
+    startSpin,
+    result,
+    winIndex,
+    showWinResult,
+  };
 };
