@@ -1,5 +1,5 @@
 export const baseUrl = 'https://youwin.gg/' || process.env.NEXT_PUBLIC_BASE_URL!;
-export const apiImgUrl = process.env.NEXT_PUBLIC_API_IMG_URL!;
+export const apiImgUrl = 'https://youwin.gg/' || process.env.NEXT_PUBLIC_API_IMG_URL!;
 
 export const wheelIconParams: { [key: string]: string } = {
   vip3d: 'w-[140px]',
