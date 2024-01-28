@@ -9,13 +9,7 @@ import { useEffect, useState } from 'react';
 
 export default function HomePage() {
   const searchParams = useSearchParams();
-
-  const [token, setToken] = useState('');
   const [wheelSections, setWheelSections] = useState([]);
-
-  useEffect(() => {
-    setToken(searchParams?.get('token') || '');
-  }, [searchParams]);
 
   useEffect(() => {
     apiService
@@ -23,8 +17,10 @@ export default function HomePage() {
       .then((res: any) => setWheelSections(res));
   }, []);
 
+  if(!wheelSections) return <div>Loading...</div>;
+
   return (
-    <WheelProvider {...{ token, wheelSections }}>
+    <WheelProvider {...{ token: searchParams?.get('token') || '', wheelSections }}>
       <Home />;
     </WheelProvider>
   );
