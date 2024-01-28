@@ -5,14 +5,23 @@ import { WheelProvider } from '@/src/providers/wheel-provider';
 import { apiService } from '@/src/utils/api-service';
  
 import { useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react';
 
-export default async function HomePage() {
+export default function HomePage() {
   const searchParams = useSearchParams();
 
-  const token =
-    typeof searchParams?.get('token') || undefined;
+  const [token, setToken] = useState('');
+  const [wheelSections, setWheelSections] = useState([]);
 
-  const wheelSections = (await apiService.getRoulettePrizes()) || [];
+  useEffect(() => {
+    setToken(searchParams?.get('token') || '');
+  }, [searchParams]);
+
+  useEffect(() => {
+    apiService
+      .getRoulettePrizes()
+      .then((res: any) => setWheelSections(res));
+  }, []);
 
   return (
     <WheelProvider {...{ token, wheelSections }}>

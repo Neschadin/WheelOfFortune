@@ -6,7 +6,7 @@ class ApiService {
 
   constructor() {
     this._apiClient = axios.create({
-      baseURL: baseUrl + '/api/',
+      baseURL: baseUrl + 'api/',
     });
 
     this._apiClient.interceptors.request.use(
