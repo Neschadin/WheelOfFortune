@@ -13,16 +13,14 @@ import clsx from 'clsx';
 
 export const WheelOfFortune = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { wheelSections, isAuthenticated, forbiddenToPlay } = useWheelCtx();
+  const { wheelSections, isAuthenticated, isSpined, startSpin } = useWheelCtx();
   const {
     TIME_ROTATION,
     wheelRotationDeg,
-    isSpined,
-    startSpin,
     result,
     winIndex,
     showWinResult,
-  } = useWheel(wheelSections);
+  } = useWheel(wheelSections, isSpined);
 
   const goBtnAction = () => {
     if (isAuthenticated) {
@@ -69,7 +67,7 @@ export const WheelOfFortune = () => {
 
         <GoButton
           onClick={goBtnAction}
-          disabled={!wheelSections.length || isSpined || forbiddenToPlay}
+          disabled={!wheelSections.length || isSpined}
         />
       </div>
 

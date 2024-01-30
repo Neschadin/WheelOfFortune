@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react';
 
 const TIME_ROTATION = 7000;
 
-export const useWheel = (wheelSections: TWheelSections) => {
+export const useWheel = (wheelSections: TWheelSections, isSpined: boolean) => {
   const { getRouletteResult } = apiService;
-  const [isSpined, setIsSpined] = useState(false);
+
   const [result, setResult] = useState<TResult>();
   const [winIndex, setWinIndex] = useState<null | number>(null);
   const [wheelRotationDeg, setWheelRotationDeg] = useState(0);
@@ -13,10 +13,6 @@ export const useWheel = (wheelSections: TWheelSections) => {
 
   const sectionAngle = 360 / wheelSections.length;
   const delta = sectionAngle / 2;
-
-  const startSpin = () => {
-    setIsSpined(true);
-  };
 
   const findWinIndex = () => {
     if (!result) return null;
@@ -79,7 +75,6 @@ export const useWheel = (wheelSections: TWheelSections) => {
     TIME_ROTATION,
     wheelRotationDeg,
     isSpined,
-    startSpin,
     result,
     winIndex,
     showWinResult,
