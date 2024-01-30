@@ -28,8 +28,7 @@ const LabelFirstChB = ({ isAuthenticated }: { isAuthenticated: boolean }) => (
 
 export const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { isAuthenticated, forbiddenToPlay, redirectIfHasPlayed } =
-    useWheelCtx();
+  const { isAuthenticated, isSpined, redirectIfHasPlayed } = useWheelCtx();
 
   const openCloseModal = () => {
     setIsModalOpen(!isModalOpen);
@@ -51,7 +50,7 @@ export const Home = () => {
           <CheckboxRow checked={isAuthenticated}>
             <LabelFirstChB isAuthenticated={isAuthenticated} />
           </CheckboxRow>
-          <CheckboxRow checked={!forbiddenToPlay}>
+          <CheckboxRow checked={isSpined}>
             1 FREE WHEEL OF FORTUNE SPIN
           </CheckboxRow>
           <CheckboxRow checked={false}>3 FREE BOXES EVERY DAY</CheckboxRow>

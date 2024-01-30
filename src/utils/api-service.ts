@@ -32,9 +32,10 @@ class ApiService {
   ): Promise<T> {
     try {
       const res = await request;
+
       return res.data;
-    } catch (error) {
-      console.error('Error fetching data >> ', error);
+    } catch (error: any) {
+      console.warn('Error fetching data >> ', error?.message);
       throw error;
     }
   }

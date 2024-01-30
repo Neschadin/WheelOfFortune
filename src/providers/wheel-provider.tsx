@@ -12,9 +12,10 @@ import { baseUrl } from '../config';
 
 type TContextProps = {
   isAuthenticated: boolean;
-  forbiddenToPlay: boolean;
   wheelSections: TWheelSections;
+  isSpined: boolean;
   redirectIfHasPlayed: () => void;
+  startSpin: () => void;
 };
 
 type TProviderProps = {
@@ -29,7 +30,7 @@ const useWheelCtx = () => useContext(WheelContext);
 
 const WheelProvider = ({ token, wheelSections, children }: TProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [forbiddenToPlay, setForbiddenToPlay] = useState(true);
+  const [isSpined, setIsSpined] = useState(false);
   const { getPlayerData } = apiService;
 
   const setToken = (token: string) => {
@@ -45,6 +46,10 @@ const WheelProvider = ({ token, wheelSections, children }: TProviderProps) => {
     localStorage.removeItem('authToken');
   };
 
+  const startSpin = () => {
+    setIsSpined(true);
+  };
+
   useEffect(() => {
     token && setToken(token);
 
@@ -52,14 +57,13 @@ const WheelProvider = ({ token, wheelSections, children }: TProviderProps) => {
       try {
         const res = await getPlayerData();
 
-        if (res && res.welcomeBonusReceived) {
-          redirectIfHasPlayed();
-        } else {
-          setForbiddenToPlay(false);
-          setIsAuthenticated(true);
+        if (Object.hasOwn(res, 'welcomeBonusReceived')) {
+          res.welcomeBonusReceived
+            ? redirectIfHasPlayed()
+            : setIsAuthenticated(true);
         }
       } catch (err: any) {
-        const { status, data } = err?.response;
+        const { status = null, data = null } = err?.response;
         (status === 401 || data === 'Wrong token') && removeToken();
       }
     };
@@ -69,9 +73,10 @@ const WheelProvider = ({ token, wheelSections, children }: TProviderProps) => {
 
   const contextValue = {
     isAuthenticated,
-    forbiddenToPlay,
     wheelSections,
+    isSpined,
     redirectIfHasPlayed,
+    startSpin,
   };
 
   return (
