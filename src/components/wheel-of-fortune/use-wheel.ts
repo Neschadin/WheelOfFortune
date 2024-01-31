@@ -2,10 +2,11 @@ import { apiService } from '@/src/utils/api-service';
 import { useEffect, useState } from 'react';
 
 const TIME_ROTATION = 7000;
+const initSections = Array(10).fill({});
 
-export const useWheel = (wheelSections: TWheelSections, isSpined: boolean) => {
-  const { getRouletteResult } = apiService;
-
+export const useWheel = (isSpined: boolean) => {
+  const { getRoulettePrizes, getRouletteResult } = apiService;
+  const [wheelSections, setWheelSections] = useState(initSections);
   const [result, setResult] = useState<TResult>();
   const [winIndex, setWinIndex] = useState<null | number>(null);
   const [wheelRotationDeg, setWheelRotationDeg] = useState(0);
@@ -25,6 +26,10 @@ export const useWheel = (wheelSections: TWheelSections, isSpined: boolean) => {
     const i = Math.floor(currentSegment);
     return i >= wheelSections.length ? 0 : i;
   };
+
+  useEffect(() => {
+    getRoulettePrizes().then((res) => setWheelSections(res));
+  }, []);
 
   useEffect(() => {
     if (!isSpined) return;

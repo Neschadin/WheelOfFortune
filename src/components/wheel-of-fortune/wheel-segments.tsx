@@ -7,7 +7,7 @@ type TProps = {
 };
 
 export const WheelSegments = ({ wheelSections, winIndex }: TProps) => {
-  if (!wheelSections.length) return null;
+  // if (!wheelSections.length) return null;
 
   const sectionAngle = 360 / wheelSections.length;
   const halfBase = 50 * Math.tan((sectionAngle / 2) * (Math.PI / 180));
@@ -22,7 +22,7 @@ export const WheelSegments = ({ wheelSections, winIndex }: TProps) => {
 
     return (
       <div
-        key={'segmentKey_' + id}
+        key={'segmentKey_' + id+i}
         style={segmentStyle}
         className={clsx(
           { 'blur-sm brightness-50': winIndex !== null && winIndex !== i },

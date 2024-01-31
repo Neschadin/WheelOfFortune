@@ -7,28 +7,23 @@ import {
   useState,
   useEffect,
 } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { apiService } from '../utils/api-service';
 import { baseUrl } from '../config';
 
 type TContextProps = {
   isAuthenticated: boolean;
-  wheelSections: TWheelSections;
   isSpined: boolean;
   redirectIfHasPlayed: () => void;
   startSpin: () => void;
-};
-
-type TProviderProps = {
-  token?: string;
-  wheelSections: TWheelSections;
-  children: ReactNode;
 };
 
 const WheelContext = createContext<TContextProps>({} as TContextProps);
 
 const useWheelCtx = () => useContext(WheelContext);
 
-const WheelProvider = ({ token, wheelSections, children }: TProviderProps) => {
+const WheelProvider = ({ children }: { children: ReactNode }) => {
+  const searchParams = useSearchParams();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isSpined, setIsSpined] = useState(false);
   const { getPlayerData } = apiService;
@@ -51,6 +46,9 @@ const WheelProvider = ({ token, wheelSections, children }: TProviderProps) => {
   };
 
   useEffect(() => {
+    const token = searchParams.get('token');
+    console.log(token);
+
     token && setToken(token);
 
     const verifyTokenAndPlayer = async () => {
@@ -73,7 +71,6 @@ const WheelProvider = ({ token, wheelSections, children }: TProviderProps) => {
 
   const contextValue = {
     isAuthenticated,
-    wheelSections,
     isSpined,
     redirectIfHasPlayed,
     startSpin,

@@ -56,9 +56,7 @@ export const Modal = ({ isOpen, onClose, children }: TProps) => {
   return (
     <dialog
       ref={ref}
-      className="relative max-h-fit w-[600px] rounded-[10px] border border-blue-950 bg-stone-950 p-[74px] 
-                 backdrop:bg-stone-950 backdrop:opacity-75"
-      style={{ boxShadow: '0px 0px 14px 0 rgba(221 214 214 / 0.5)' }}
+      className="relative max-h-fit w-[600px] rounded-[10px] bg-stone-950 p-[74px]"
       onCancel={handleClose}
       onKeyDown={handleKeyDown}
       onClick={handleOutsideClick}
