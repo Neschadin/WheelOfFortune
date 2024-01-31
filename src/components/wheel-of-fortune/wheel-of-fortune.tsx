@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import clsx from 'clsx';
 import { useWheel } from './use-wheel';
 import { useWheelCtx } from '@/src/providers/wheel-provider';
 
@@ -9,26 +10,24 @@ import { WheelSegments } from './wheel-segments';
 import { GoButton } from './go-button';
 import { MarkerIcon } from '../icons';
 import { Modal } from '..';
-import clsx from 'clsx';
 
 export const WheelOfFortune = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { wheelSections, isAuthenticated, isSpined, startSpin } = useWheelCtx();
+  const { isAuthenticated, isSpined, startSpin } = useWheelCtx();
   const {
     TIME_ROTATION,
+    wheelSections,
     wheelRotationDeg,
     result,
     winIndex,
     showWinResult,
-  } = useWheel(wheelSections, isSpined);
+  } = useWheel(isSpined);
 
   const goBtnAction = () => {
-    if (isAuthenticated) {
-      startSpin();
-    } else {
-      setIsModalOpen(true);
-    }
+    isAuthenticated ? startSpin() : setIsModalOpen(true);
   };
+
+  const onClose = () => setIsModalOpen(false);
 
   return (
     <div className="flex-center relative flex-col gap-10">
@@ -44,10 +43,11 @@ export const WheelOfFortune = () => {
 
         <div className="size-full rotate-90">
           <div
-            className="size-full transition-transform"
+            className="size-full"
             style={{
               transform: `rotate(${wheelRotationDeg}deg)`,
               transitionDuration: `${TIME_ROTATION}ms`,
+              transitionTimingFunction: 'cubic-bezier(0.5, -0.25, 0, 1)',
             }}
           >
             <WheelSegments {...{ wheelSections, winIndex }} />
@@ -58,20 +58,22 @@ export const WheelOfFortune = () => {
 
         <div
           className={clsx(
-            'absolute left-[34%] top-1/2 -translate-y-1/2 transition-all',
-            winIndex ? 'opacity-100' : 'opacity-0'
+            'absolute top-1/2 -translate-y-1/2 transition-all duration-500',
+            isSpined ? 'left-[34%] opacity-100' : 'left-[36%] opacity-0'
           )}
         >
           <MarkerIcon />
         </div>
 
-        <GoButton
-          onClick={goBtnAction}
-          disabled={!wheelSections.length || isSpined}
-        />
+        <div className="block-center size-1/5">
+          <GoButton
+            onClick={goBtnAction}
+            disabled={!wheelSections.length || isSpined}
+          />
+        </div>
       </div>
 
-      <Modal isOpen={showWinResult || isModalOpen}>
+      <Modal isOpen={showWinResult || isModalOpen} onClose={onClose}>
         {result ? (
           <ModalContentYourWin result={result} />
         ) : (

@@ -9,10 +9,17 @@ export const DropGiftIcon = () => {
         src={getImgUrl('dropbox')}
         alt=""
       />
-      <div className="block-center">
+      <div className="block-center animate-size-opacity size-full brightness-200">
         <GreenShadowIcon />
       </div>
-      <img className="block-center size-8" src={getImgUrl('neonGift')} alt="" />
+      <div className="block-center animate-size-opacity size-2/3 brightness-200">
+        <GreenShadowIcon />
+      </div>
+      <img
+        className="block-center size-[30px]"
+        src={getImgUrl('neonGift')}
+        alt=""
+      />
     </picture>
   );
 };

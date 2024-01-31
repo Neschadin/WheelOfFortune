@@ -1,4 +1,4 @@
-import { ReactNode, Suspense } from 'react';
+import { ReactNode } from 'react';
 import { inter, roboto, luckiest } from './fonts';
 
 import type { Metadata } from 'next';
@@ -15,9 +15,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body
         className={`${inter.className} ${roboto.variable} ${luckiest.variable}`}
       >
-        <Suspense fallback={<div>Loading...</div>}>
-          {children}
-        </Suspense>
+        {children}
       </body>
     </html>
   );

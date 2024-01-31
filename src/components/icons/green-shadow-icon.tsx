@@ -2,8 +2,8 @@ export const GreenShadowIcon = () => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="105"
-      height="105"
+      width="100%"
+      height="100%"
       fill="none"
       viewBox="0 0 105 105"
     >
