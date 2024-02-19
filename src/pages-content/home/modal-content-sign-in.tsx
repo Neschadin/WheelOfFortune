@@ -1,14 +1,11 @@
-import { baseUrl } from '@/src/config';
+import { useWheelCtx } from '@/src/providers/wheel-provider';
 import { getImgUrl } from '@/src/utils/image-urls';
 
-export const ModalContentSignIn = ({ isGoBtn }: { isGoBtn?: boolean }) => {
-  const handleSignInBtn = () => {
-    const url = `${baseUrl}api/player/auth${isGoBtn ? '?source=wheel' : ''}`;
-    window.location.href = url;
-  };
+export const ModalContentSignIn = () => {
+  const { handleSignInBtn } = useWheelCtx();
 
   return (
-    <div className="mx-auto mt-10 w-[366px]">
+    <div className="mx-auto mt-10 sm:w-[366px]">
       <p className="mb-14 text-center font-roboto text-lg leading-8 tracking-[1.08px] text-gray-500">
         To spin the wheel, you need to log in to your{' '}
         <span className="font-bold">STEAM</span> account

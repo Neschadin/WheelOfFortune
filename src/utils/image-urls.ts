@@ -1,6 +1,6 @@
 import { apiImgUrl } from '../config';
 
-const imgItems: { [key: string]: string } = {
+const imgItems = {
   Pen: 'pen.svg',
 
   star: 'star.svg',

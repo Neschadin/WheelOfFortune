@@ -1,38 +1,21 @@
-import { useState } from 'react';
 import clsx from 'clsx';
 import { useWheel } from './use-wheel';
 import { useWheelCtx } from '@/src/providers/wheel-provider';
 
-import { ModalContentYourWin } from '@/src/pages-content/home/modal-content-your-win';
-import { ModalContentSignIn } from '@/src/pages-content/home/modal-content-sign-in';
 import { CenterCircles } from './center-circles';
 import { WheelSegments } from './wheel-segments';
 import { GoButton } from './go-button';
 import { MarkerIcon } from '../icons';
-import { Modal } from '..';
 
 export const WheelOfFortune = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { isAuthenticated, isSpined, startSpin } = useWheelCtx();
-  const {
-    TIME_ROTATION,
-    wheelSections,
-    wheelRotationDeg,
-    result,
-    winIndex,
-    showWinResult,
-  } = useWheel(isSpined);
-
-  const goBtnAction = () => {
-    isAuthenticated ? startSpin() : setIsModalOpen(true);
-  };
-
-  const onClose = () => setIsModalOpen(false);
+  const { isSpined, handleGoBtn } = useWheelCtx();
+  const { TIME_ROTATION, wheelSections, wheelRotationDeg, winIndex } =
+    useWheel();
 
   return (
-    <div className="flex-center relative flex-col gap-10">
+    // <div className="flex-center relative flex-col gap-10">
       <div
-        className="relative h-[640px] w-[640px] shrink-0 overflow-hidden rounded-full border-4 border-zinc-900 bg-gradient-to-br 
+        className="relative size-[640px] shrink-0 overflow-hidden rounded-full border-4 border-zinc-900 bg-gradient-to-br 
       from-[#da87c2] via-violet-900 to-[#9795f0]"
         style={{ boxShadow: '0px 0px 12px 12px rgba(130 121 255 / 0.25)' }}
       >
@@ -67,19 +50,10 @@ export const WheelOfFortune = () => {
 
         <div className="block-center size-1/5">
           <GoButton
-            onClick={goBtnAction}
+            onClick={handleGoBtn}
             disabled={!wheelSections.length || isSpined}
           />
         </div>
       </div>
-
-      <Modal isOpen={showWinResult || isModalOpen} onClose={onClose}>
-        {result ? (
-          <ModalContentYourWin result={result} />
-        ) : (
-          <ModalContentSignIn isGoBtn />
-        )}
-      </Modal>
-    </div>
   );
 };

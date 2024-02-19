@@ -22,7 +22,7 @@ export const WheelSegments = ({ wheelSections, winIndex }: TProps) => {
 
     return (
       <div
-        key={'segmentKey_' + id+i}
+        key={'segmentKey_' + id + i}
         style={segmentStyle}
         className={clsx(
           { 'blur-sm brightness-50': winIndex !== null && winIndex !== i },

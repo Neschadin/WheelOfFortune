@@ -1,23 +1,15 @@
-import {
-  KeyboardEvent,
-  MouseEventHandler,
-  ReactNode,
-  useEffect,
-  useRef,
-} from 'react';
+import { KeyboardEvent, MouseEventHandler, useEffect, useRef } from 'react';
+import { useWheelCtx } from '@/src/providers/wheel-provider';
+import { ModalContentSignIn } from '@/src/pages-content/home/modal-content-sign-in';
+import { ModalContentYourWin } from '@/src/pages-content/home/modal-content-your-win';
 import { CloseIcon } from '../icons';
 
-type TProps = {
-  isOpen: boolean;
-  onClose?: () => void;
-  children: ReactNode;
-};
-
-export const Modal = ({ isOpen, onClose, children }: TProps) => {
+export const Modal = () => {
+  const { isModalOpen, result, closeModal } = useWheelCtx();
   const ref = useRef<HTMLDialogElement | null>(null);
 
   const handleClose = () => {
-    onClose && onClose();
+    closeModal();
     ref.current?.close();
   };
 
@@ -39,11 +31,11 @@ export const Modal = ({ isOpen, onClose, children }: TProps) => {
   useEffect(() => {
     if (!ref) return;
 
-    isOpen ? ref.current?.showModal() : ref.current?.close();
-  }, [isOpen, ref]);
+    isModalOpen ? ref.current?.showModal() : ref.current?.close();
+  }, [isModalOpen, ref]);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isModalOpen) return;
 
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -51,12 +43,12 @@ export const Modal = ({ isOpen, onClose, children }: TProps) => {
     return () => {
       document.body.style.overflow = originalOverflow;
     };
-  }, [isOpen]);
+  }, [isModalOpen]);
 
   return (
     <dialog
       ref={ref}
-      className="relative max-h-fit w-[600px] rounded-[10px] bg-stone-950 p-[74px]"
+      className="relative w-80 max-w-[600px] rounded-[10px] bg-stone-950 px-4 py-8 sm:w-full sm:p-[74px]"
       onCancel={handleClose}
       onKeyDown={handleKeyDown}
       onClick={handleOutsideClick}
@@ -65,7 +57,11 @@ export const Modal = ({ isOpen, onClose, children }: TProps) => {
         <CloseIcon />
       </button>
 
-      {children}
+      {result ? (
+        <ModalContentYourWin result={result} />
+      ) : (
+        <ModalContentSignIn />
+      )}
     </dialog>
   );
 };

@@ -1,16 +1,18 @@
+import { useWheelCtx } from '@/src/providers/wheel-provider';
 import { apiService } from '@/src/utils/api-service';
 import { useEffect, useState } from 'react';
 
 const TIME_ROTATION = 7000;
 const initSections = Array(10).fill({});
 
-export const useWheel = (isSpined: boolean) => {
+export const useWheel = () => {
+  const { isSpined, showResult } = useWheelCtx();
+
   const { getRoulettePrizes, getRouletteResult } = apiService;
   const [wheelSections, setWheelSections] = useState(initSections);
   const [result, setResult] = useState<TResult>();
   const [winIndex, setWinIndex] = useState<null | number>(null);
   const [wheelRotationDeg, setWheelRotationDeg] = useState(0);
-  const [showWinResult, setShowWinResult] = useState(false);
 
   const sectionAngle = 360 / wheelSections.length;
   const delta = sectionAngle / 2;
@@ -69,7 +71,9 @@ export const useWheel = (isSpined: boolean) => {
     if (winIndex === null) return;
 
     const t = setTimeout(() => {
-      setShowWinResult(true);
+      console.log('result use>>', result);
+
+      result && showResult(result);
     }, 2000);
 
     return () => clearTimeout(t);
@@ -82,6 +86,5 @@ export const useWheel = (isSpined: boolean) => {
     isSpined,
     result,
     winIndex,
-    showWinResult,
   };
 };

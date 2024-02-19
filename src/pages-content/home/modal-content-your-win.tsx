@@ -81,7 +81,7 @@ export const ModalContentYourWin = ({ result }: { result: TResult }) => {
   const { id, amount, image_url, title, subEnd } = result;
 
   return (
-    <div className="mx-auto flex h-[340px] w-[366px] flex-col items-center justify-between text-gray-200">
+    <div className="mx-auto flex min-h-[340px] flex-col items-center justify-between text-gray-200 sm:w-[366px]">
       {id !== 'vip3d' ? <Title /> : <TitleVip />}
 
       <div className="flex-center h-40 w-44 flex-col rounded-br-md rounded-tr-md border border-stone-800 border-l-purple-950 bg-gradient-to-b from-stone-950 to-stone-800">

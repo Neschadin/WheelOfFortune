@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-
+import { useWheelCtx } from '@/src/providers/wheel-provider';
 import {
   CheckboxRow,
   GreenButton,
@@ -9,8 +8,6 @@ import {
   WheelOfFortune,
 } from '@/src/components';
 import { DropGiftIcon } from '@/src/components/icons';
-import { ModalContentSignIn } from './modal-content-sign-in';
-import { useWheelCtx } from '@/src/providers/wheel-provider';
 
 import { baseUrl } from '@/src/config';
 
@@ -27,26 +24,17 @@ const LabelFirstChB = ({ isAuthenticated }: { isAuthenticated: boolean }) => (
 );
 
 export const Home = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { isAuthenticated, isSpined, redirectIfHasPlayed } = useWheelCtx();
-
-  const openCloseModal = () => {
-    setIsModalOpen(!isModalOpen);
-  };
-
-  const handleClaimBtn = () => {
-    isAuthenticated ? redirectIfHasPlayed() : openCloseModal();
-  };
+  const { isAuthenticated, isSpined, handleClaimBtn } = useWheelCtx();
 
   return (
-    <main className="m-auto flex h-full max-w-screen-2xl items-center justify-around">
-      <div className="h-[700px] w-[500px]">
-        <div className="mb-20 font-luckiest text-[56px] leading-[66px] tracking-[8.25px]">
+    <main className="relative mx-auto h-dvh items-center justify-around overflow-hidden xl:flex">
+      <div className="mx-6 mt-12 md:ml-16 lg:w-[500px]">
+        <div className="mb-12 text-center font-luckiest text-3xl tracking-[8.25px] sm:text-left md:mb-20 md:text-[56px] md:leading-[66px]">
           <h1 className="text-[#FCE305]">YOUWIN</h1>
           <h1 className="text-[#F5F5F5]">FREE SKINS</h1>
         </div>
 
-        <div className="mb-16 flex flex-col gap-11">
+        <div className="mb-8 flex flex-col gap-7 text-xs md:mb-16 md:gap-11 md:text-sm">
           <CheckboxRow checked={isAuthenticated}>
             <LabelFirstChB isAuthenticated={isAuthenticated} />
           </CheckboxRow>
@@ -56,22 +44,25 @@ export const Home = () => {
           <CheckboxRow checked={false}>3 FREE BOXES EVERY DAY</CheckboxRow>
         </div>
 
-        <div className="mx-auto mb-12 flex w-fit">
+        <div className="mx-auto mb-12 hidden w-fit lg:flex">
           <DropGiftIcon />
           <DropGiftIcon />
           <DropGiftIcon />
         </div>
 
-        <div className="mx-auto w-fit">
+        <div className="mx-auto w-fit scale-75 sm:scale-100 md:mx-0 lg:mx-auto">
           <GreenButton onClick={handleClaimBtn}>CLAIM NOW</GreenButton>
         </div>
-
-        <Modal isOpen={isModalOpen} onClose={openCloseModal}>
-          <ModalContentSignIn />
-        </Modal>
       </div>
 
-      <WheelOfFortune />
+      <div
+        className="absolute -bottom-72 left-1/2 -translate-x-1/2 scale-50 sm:scale-75 md:-right-72 md:bottom-1/2 
+                   md:translate-x-0 md:translate-y-1/2 lg:-right-80 xl:static xl:translate-y-0 xl:scale-100"
+      >
+        <WheelOfFortune />
+      </div>
+
+      <Modal />
     </main>
   );
 };

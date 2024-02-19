@@ -6,6 +6,7 @@ import {
   ReactNode,
   useState,
   useEffect,
+  useRef,
 } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { apiService } from '../utils/api-service';
@@ -14,8 +15,15 @@ import { baseUrl } from '../config';
 type TContextProps = {
   isAuthenticated: boolean;
   isSpined: boolean;
-  redirectIfHasPlayed: () => void;
+  isModalOpen: boolean;
+  result: TResult | undefined;
   startSpin: () => void;
+  showResult: (result: TResult) => void;
+  handleClaimBtn: () => void;
+  handleGoBtn: () => void;
+  handleSignInBtn: () => void;
+  openModal: () => void;
+  closeModal: () => void;
 };
 
 const WheelContext = createContext<TContextProps>({} as TContextProps);
@@ -26,6 +34,9 @@ const WheelProvider = ({ children }: { children: ReactNode }) => {
   const searchParams = useSearchParams();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isSpined, setIsSpined] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const resultRef = useRef<TResult>();
+  const isGoBtnPressedRef = useRef<boolean>();
   const { getPlayerData } = apiService;
 
   const setToken = (token: string) => {
@@ -41,14 +52,32 @@ const WheelProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem('authToken');
   };
 
-  const startSpin = () => {
-    setIsSpined(true);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+  const startSpin = () => setIsSpined(true);
+  const showResult = (result: TResult) => {
+    resultRef.current = result;
+    openModal();
+  };
+
+  const handleClaimBtn = () => {
+    isGoBtnPressedRef.current = false;
+    isAuthenticated ? redirectIfHasPlayed() : openModal();
+  };
+
+  const handleGoBtn = () => {
+    isGoBtnPressedRef.current = true;
+    isAuthenticated ? startSpin() : setIsModalOpen(true);
+  };
+
+  const handleSignInBtn = () => {
+    const url = `${baseUrl}api/player/auth${isGoBtnPressedRef.current ? '?source=wheel' : ''}`;
+    window.location.href = url;
   };
 
   useEffect(() => {
     const token = searchParams.get('token');
-    console.log(token);
-
     token && setToken(token);
 
     const verifyTokenAndPlayer = async () => {
@@ -72,8 +101,15 @@ const WheelProvider = ({ children }: { children: ReactNode }) => {
   const contextValue = {
     isAuthenticated,
     isSpined,
-    redirectIfHasPlayed,
+    isModalOpen,
+    result: resultRef.current,
     startSpin,
+    showResult,
+    handleClaimBtn,
+    handleGoBtn,
+    handleSignInBtn,
+    openModal,
+    closeModal,
   };
 
   return (
