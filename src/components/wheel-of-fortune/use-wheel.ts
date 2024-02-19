@@ -71,8 +71,6 @@ export const useWheel = () => {
     if (winIndex === null) return;
 
     const t = setTimeout(() => {
-      console.log('result use>>', result);
-
       result && showResult(result);
     }, 2000);
 
